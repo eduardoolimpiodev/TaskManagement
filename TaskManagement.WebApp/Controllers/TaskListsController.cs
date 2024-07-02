@@ -17,8 +17,18 @@ namespace TaskManagement.WebApp.Controllers
             _httpClient = httpClient;
         }
 
+        private void SetAuthorizationHeader()
+        {
+            var token = HttpContext.Session.GetString("JWTToken");
+            if (!string.IsNullOrEmpty(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+        }
+
         public async Task<IActionResult> Index()
         {
+            SetAuthorizationHeader();
             var response = await _httpClient.GetAsync("https://localhost:5001/api/tasklists");
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
