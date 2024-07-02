@@ -5,7 +5,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using TaskManagement.Domain.Interfaces;
 using TaskManagement.Infrastructure.Data;
-using TaskManagement.Repositories.Repositories;
+using TaskManagement.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
