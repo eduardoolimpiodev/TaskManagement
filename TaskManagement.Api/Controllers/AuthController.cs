@@ -20,7 +20,7 @@ namespace TaskManagement.Api.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] UserLogin userLogin)
         {
-            if (userLogin.Username == "test" && userLogin.Password == "password") // Simulação de autenticação
+            if (userLogin.Username == "test" && userLogin.Password == "password")
             {
                 var claims = new[]
                 {
