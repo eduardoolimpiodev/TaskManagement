@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 using TaskManagement.Domain.Entities;
 using TaskManagement.Domain.Interfaces;
+using TaskManagement.Infrastructure.Data;
 
-namespace TaskManagement.Repositories.Repositories
+namespace TaskManagement.Repositories
 {
     public class TaskListRepository : ITaskListRepository
     {
