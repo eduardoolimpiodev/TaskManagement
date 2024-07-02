@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using TaskManagement.WebApp.Models;
+using TaskManagement.Domain.Entities;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Text;
-using TaskManagement.Domain.Entities;
 
 namespace TaskManagement.WebApp.Controllers
 {
@@ -23,7 +22,7 @@ namespace TaskManagement.WebApp.Controllers
             var response = await _httpClient.GetAsync("https://localhost:5001/api/tasklists");
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
-            var taskLists = JsonConvert.DeserializeObject<IEnumerable<TaskList>>(content);
+            var taskLists = JsonConvert.DeserializeObject<IEnumerable<TaskManagement.Domain.Entities.TaskList>>(content);
             return View(taskLists);
         }
 
@@ -33,7 +32,7 @@ namespace TaskManagement.WebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(TaskList taskList)
+        public async Task<IActionResult> Create(TaskManagement.Domain.Entities.TaskList taskList)
         {
             var content = new StringContent(JsonConvert.SerializeObject(taskList), Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync("https://localhost:5001/api/tasklists", content);
@@ -46,12 +45,12 @@ namespace TaskManagement.WebApp.Controllers
             var response = await _httpClient.GetAsync($"https://localhost:5001/api/tasklists/{id}");
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
-            var taskList = JsonConvert.DeserializeObject<TaskList>(content);
+            var taskList = JsonConvert.DeserializeObject<TaskManagement.Domain.Entities.TaskList>(content);
             return View(taskList);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(TaskList taskList)
+        public async Task<IActionResult> Edit(TaskManagement.Domain.Entities.TaskList taskList)
         {
             var content = new StringContent(JsonConvert.SerializeObject(taskList), Encoding.UTF8, "application/json");
             var response = await _httpClient.PutAsync($"https://localhost:5001/api/tasklists/{taskList.Id}", content);
