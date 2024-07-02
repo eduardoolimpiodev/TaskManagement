@@ -1,0 +1,33 @@
+﻿@model IEnumerable<TaskManagement.WebApp.Models.TaskItem>
+
+<h2>Task Items</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Due Date</th>
+            <th>Is Completed</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var taskItem in Model)
+        {
+            <tr>
+                <td>@taskItem.Title</td>
+                <td>@taskItem.Description</td>
+                <td>@taskItem.DueDate?.ToString("yyyy-MM-dd")</td>
+                <td>@taskItem.IsCompleted</td>
+                <td>
+                    <a href="@Url.Action("Edit", new { id = taskItem.Id })" class="btn btn-primary">Edit</a>
+                    <a href="@Url.Action("Delete", new { id = taskItem.Id, taskListId = taskItem.TaskListId })" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="@Url.Action("Create", new { taskListId = ViewBag.TaskListId })" class="btn btn-success">Create New Task</a>
+<a href="@Url.Action("Index", "TaskLists")" class="btn btn-info">Back to Lists</a>
