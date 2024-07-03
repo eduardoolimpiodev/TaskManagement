@@ -1,11 +1,6 @@
-﻿@model IEnumerable<TaskManagement.Domain.Entities.TaskList>
-
-@{
-    ViewData["Title"] = "Task Lists";
-}
+﻿@model IEnumerable<TaskManagement.WebApp.Models.TaskList>
 
 <h1>Task Lists</h1>
-
 <table class="table">
     <thead>
         <tr>
@@ -15,17 +10,18 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var taskList in Model)
         {
             <tr>
-                <td>@item.Name</td>
-                <td>@item.Description</td>
+                <td>@taskList.Name</td>
+                <td>@taskList.Description</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@taskList.Id" class="btn btn-primary">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@taskList.Id" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-<a asp-action="Create">Create New Task List</a>
+
+<a class="btn btn-primary" href="/TaskLists/Create">Create New Task List</a>

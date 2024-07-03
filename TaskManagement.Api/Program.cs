@@ -6,6 +6,7 @@ using System.Text;
 using TaskManagement.Api.Services;
 using TaskManagement.Domain.Interfaces;
 using TaskManagement.Infrastructure;
+using TaskManagement.Infrastructure.Repositories;
 using TaskManagement.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);

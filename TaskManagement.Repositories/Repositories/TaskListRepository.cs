@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TaskManagement.Domain.Entities;
 using TaskManagement.Domain.Interfaces;
 using TaskManagement.Infrastructure;
 
-namespace TaskManagement.Repositories
+namespace TaskManagement.Infrastructure.Repositories
 {
     public class TaskListRepository : ITaskListRepository
     {
@@ -26,9 +27,14 @@ namespace TaskManagement.Repositories
             return await _context.TaskLists.FindAsync(id);
         }
 
+        public async Task<TaskList> GetByNameAsync(string name)
+        {
+            return await _context.TaskLists.FirstOrDefaultAsync(tl => tl.Name == name);
+        }
+
         public async Task AddAsync(TaskList taskList)
         {
-            _context.TaskLists.Add(taskList);
+            await _context.TaskLists.AddAsync(taskList);
             await _context.SaveChangesAsync();
         }
 

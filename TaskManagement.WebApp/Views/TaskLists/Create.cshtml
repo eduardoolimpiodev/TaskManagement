@@ -1,6 +1,8 @@
-﻿@model TaskManagement.WebApp.Models.TaskList
+﻿@model TaskManagement.WebApp.Dtos.TaskListDto
 
-<form asp-action="Create">
+<h1>Create Task List</h1>
+
+<form asp-action="Create" method="post">
     <div class="form-group">
         <label asp-for="Name" class="control-label"></label>
         <input asp-for="Name" class="form-control" />

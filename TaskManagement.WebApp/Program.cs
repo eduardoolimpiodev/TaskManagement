@@ -14,6 +14,7 @@ builder.Services.AddCors(options =>
         });
 });
 
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
