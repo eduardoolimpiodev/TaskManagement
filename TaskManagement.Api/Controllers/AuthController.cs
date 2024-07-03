@@ -1,53 +1,43 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+using System.Threading.Tasks;
+using TaskManagement.Api.Models;
+using TaskManagement.Api.Services;
 
 namespace TaskManagement.Api.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
+        private readonly IAuthService _authService;
 
-        public AuthController(IConfiguration configuration)
+        public AuthController(IAuthService authService)
         {
-            _configuration = configuration;
+            _authService = authService;
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(UserRegisterModel model)
+        {
+            var result = await _authService.RegisterAsync(model);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok(result);
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] UserLogin userLogin)
+        public async Task<IActionResult> Login(UserLoginModel model)
         {
-            if (userLogin.Username == "test" && userLogin.Password == "password")
+            var result = await _authService.LoginAsync(model);
+            if (!result.Succeeded)
             {
-                var claims = new[]
-                {
-                    new Claim(JwtRegisteredClaimNames.Sub, userLogin.Username),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                };
-
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-                var token = new JwtSecurityToken(
-                    issuer: _configuration["Jwt:Issuer"],
-                    audience: _configuration["Jwt:Audience"],
-                    claims: claims,
-                    expires: DateTime.Now.AddMinutes(30),
-                    signingCredentials: creds);
-
-                return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
+                return Unauthorized(result.Errors);
             }
 
-            return Unauthorized();
+            return Ok(new { token = result.Token });
         }
-    }
-
-    public class UserLogin
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
     }
 }

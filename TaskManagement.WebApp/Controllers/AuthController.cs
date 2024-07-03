@@ -26,7 +26,7 @@ namespace TaskManagement.WebApp.Controllers
         public async Task<IActionResult> Login(UserLoginModel model)
         {
             var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("https://localhost:5001/api/auth/login", content);
+            var response = await _httpClient.PostAsync("http://localhost:5200/api/auth/login", content);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -50,7 +50,7 @@ namespace TaskManagement.WebApp.Controllers
         public async Task<IActionResult> Register(UserRegisterModel model)
         {
             var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("https://localhost:5001/api/auth/register", content);
+            var response = await _httpClient.PostAsync("http://localhost:5200/api/auth/register", content);
 
             if (!response.IsSuccessStatusCode)
             {

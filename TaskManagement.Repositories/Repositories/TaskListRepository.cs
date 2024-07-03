@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using TaskManagement.Domain.Entities;
 using TaskManagement.Domain.Interfaces;
-using TaskManagement.Infrastructure.Data;
+using TaskManagement.Infrastructure;
 
 namespace TaskManagement.Repositories
 {
@@ -26,7 +28,7 @@ namespace TaskManagement.Repositories
 
         public async Task AddAsync(TaskList taskList)
         {
-            await _context.TaskLists.AddAsync(taskList);
+            _context.TaskLists.Add(taskList);
             await _context.SaveChangesAsync();
         }
 
@@ -39,8 +41,11 @@ namespace TaskManagement.Repositories
         public async Task DeleteAsync(int id)
         {
             var taskList = await _context.TaskLists.FindAsync(id);
-            _context.TaskLists.Remove(taskList);
-            await _context.SaveChangesAsync();
+            if (taskList != null)
+            {
+                _context.TaskLists.Remove(taskList);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using TaskManagement.Domain.Entities;
 using TaskManagement.Domain.Interfaces;
 
 namespace TaskManagement.Api.Controllers
 {
-    [Authorize]
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class TaskListsController : ControllerBase
     {
         private readonly ITaskListRepository _taskListRepository;
@@ -18,32 +18,31 @@ namespace TaskManagement.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TaskList>>> GetTaskLists()
+        public async Task<IEnumerable<TaskList>> GetAll()
         {
-            var taskLists = await _taskListRepository.GetAllAsync();
-            return Ok(taskLists);
+            return await _taskListRepository.GetAllAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<TaskList>> GetTaskList(int id)
+        public async Task<ActionResult<TaskList>> GetById(int id)
         {
             var taskList = await _taskListRepository.GetByIdAsync(id);
             if (taskList == null)
             {
                 return NotFound();
             }
-            return Ok(taskList);
+            return taskList;
         }
 
         [HttpPost]
-        public async Task<ActionResult<TaskList>> PostTaskList(TaskList taskList)
+        public async Task<ActionResult<TaskList>> Create(TaskList taskList)
         {
             await _taskListRepository.AddAsync(taskList);
-            return CreatedAtAction(nameof(GetTaskList), new { id = taskList.Id }, taskList);
+            return CreatedAtAction(nameof(GetById), new { id = taskList.Id }, taskList);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTaskList(int id, TaskList taskList)
+        public async Task<IActionResult> Update(int id, TaskList taskList)
         {
             if (id != taskList.Id)
             {
@@ -55,17 +54,12 @@ namespace TaskManagement.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTaskList(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var taskList = await _taskListRepository.GetByIdAsync(id);
             if (taskList == null)
             {
                 return NotFound();
-            }
-
-            if (taskList.Tasks.Any())
-            {
-                return BadRequest("Cannot delete a list with tasks.");
             }
 
             await _taskListRepository.DeleteAsync(id);

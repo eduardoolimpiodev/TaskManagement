@@ -1,10 +1,11 @@
-using Microsoft.AspNetCore.Mvc;
-using TaskManagement.Domain.Entities;
-using System.Net.Http;
-using System.Threading.Tasks;
+using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using TaskManagement.Domain.Entities;
 
 namespace TaskManagement.WebApp.Controllers
 {
@@ -29,7 +30,7 @@ namespace TaskManagement.WebApp.Controllers
         public async Task<IActionResult> Index()
         {
             SetAuthorizationHeader();
-            var response = await _httpClient.GetAsync("https://localhost:5001/api/tasklists");
+            var response = await _httpClient.GetAsync("http://localhost:5200/api/tasklists");
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             var taskLists = JsonConvert.DeserializeObject<IEnumerable<TaskManagement.Domain.Entities.TaskList>>(content);
@@ -44,15 +45,17 @@ namespace TaskManagement.WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(TaskManagement.Domain.Entities.TaskList taskList)
         {
+            SetAuthorizationHeader();
             var content = new StringContent(JsonConvert.SerializeObject(taskList), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("https://localhost:5001/api/tasklists", content);
+            var response = await _httpClient.PostAsync("http://localhost:5200/api/tasklists", content);
             response.EnsureSuccessStatusCode();
             return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var response = await _httpClient.GetAsync($"https://localhost:5001/api/tasklists/{id}");
+            SetAuthorizationHeader();
+            var response = await _httpClient.GetAsync($"http://localhost:5200/api/tasklists/{id}");
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             var taskList = JsonConvert.DeserializeObject<TaskManagement.Domain.Entities.TaskList>(content);
@@ -62,15 +65,17 @@ namespace TaskManagement.WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(TaskManagement.Domain.Entities.TaskList taskList)
         {
+            SetAuthorizationHeader();
             var content = new StringContent(JsonConvert.SerializeObject(taskList), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PutAsync($"https://localhost:5001/api/tasklists/{taskList.Id}", content);
+            var response = await _httpClient.PutAsync($"http://localhost:5200/api/tasklists/{taskList.Id}", content);
             response.EnsureSuccessStatusCode();
             return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            var response = await _httpClient.DeleteAsync($"https://localhost:5001/api/tasklists/{id}");
+            SetAuthorizationHeader();
+            var response = await _httpClient.DeleteAsync($"http://localhost:5200/api/tasklists/{id}");
             response.EnsureSuccessStatusCode();
             return RedirectToAction(nameof(Index));
         }

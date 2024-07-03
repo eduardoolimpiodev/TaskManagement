@@ -5,15 +5,14 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using TaskManagement.Infrastructure;
 
 #nullable disable
 
 namespace TaskManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(TaskManagementContext))]
-    [Migration("20240702231439_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240703030225_UpdateTaskListSchema")]
+    partial class UpdateTaskListSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -65,22 +64,44 @@ namespace TaskManagement.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.ToTable("TaskLists");
+                });
+
+            modelBuilder.Entity("TaskManagement.Domain.Entities.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("TaskManagement.Domain.Entities.TaskItem", b =>
                 {
                     b.HasOne("TaskManagement.Domain.Entities.TaskList", "TaskList")
-                        .WithMany("Tasks")
+                        .WithMany("TaskItems")
                         .HasForeignKey("TaskListId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -90,7 +111,7 @@ namespace TaskManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("TaskManagement.Domain.Entities.TaskList", b =>
                 {
-                    b.Navigation("Tasks");
+                    b.Navigation("TaskItems");
                 });
 #pragma warning restore 612, 618
         }
