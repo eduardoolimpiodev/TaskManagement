@@ -23,22 +23,28 @@ namespace TaskManagement.Api.Controllers
             return await _taskListRepository.GetAllAsync();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] TaskList taskList)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _taskListRepository.AddAsync(taskList);
+            return CreatedAtAction(nameof(GetById), new { id = taskList.Id }, taskList);
+        }
+
         [HttpGet("{id}")]
-        public async Task<ActionResult<TaskList>> GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             var taskList = await _taskListRepository.GetByIdAsync(id);
             if (taskList == null)
             {
                 return NotFound();
             }
-            return taskList;
-        }
 
-        [HttpPost]
-        public async Task<ActionResult<TaskList>> Create(TaskList taskList)
-        {
-            await _taskListRepository.AddAsync(taskList);
-            return CreatedAtAction(nameof(GetById), new { id = taskList.Id }, taskList);
+            return Ok(taskList);
         }
 
         [HttpPut("{id}")]
