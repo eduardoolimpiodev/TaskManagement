@@ -43,13 +43,22 @@ namespace TaskManagement.WebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(TaskManagement.Domain.Entities.TaskList taskList)
+        public async Task<IActionResult> Create(TaskList taskList)
         {
-            SetAuthorizationHeader();
-            var content = new StringContent(JsonConvert.SerializeObject(taskList), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("http://localhost:5200/api/tasklists", content);
-            response.EnsureSuccessStatusCode();
-            return RedirectToAction(nameof(Index));
+            if (!ModelState.IsValid)
+            {
+                return View(taskList);
+            }
+
+            var response = await _httpClient.PostAsJsonAsync("http://localhost:5200/api/tasklists", taskList);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Index");
+            }
+
+            ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+            return View(taskList);
         }
 
         public async Task<IActionResult> Edit(int id)
